@@ -2,11 +2,17 @@
 
 namespace CoreBlogger.Core
 {
-    class Program
+    public class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            foreach (var item in args)
+            {
+                System.Console.WriteLine(item);
+            }
+
+
+            var arguments = new Arguments(args);
         }
     }
 }
