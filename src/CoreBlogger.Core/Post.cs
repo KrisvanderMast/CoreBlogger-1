@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace CoreBlogger.Core
 {
@@ -15,9 +16,9 @@ namespace CoreBlogger.Core
             Month = originalFileName[5..7];
             Day = originalFileName[8..10];
 
-            string fileName = originalFileName[11..^3];
-            FullySpecifiedFolder = $"{postOutputPath}\\{Year}\\{Month}\\{Day}";
-            FullySpecifiedFolderAndFileName = $"{FullySpecifiedFolder}\\{fileName}.html";
+            string fileName = $"{originalFileName[11..^3]}.html";
+            FullySpecifiedFolder = Path.Combine(postOutputPath, Year, Month, Day);
+            FullySpecifiedFolderAndFileName = Path.Combine(FullySpecifiedFolder, fileName);
         }
 
         public PostFrontMatter FrontMatter { get; private set; }

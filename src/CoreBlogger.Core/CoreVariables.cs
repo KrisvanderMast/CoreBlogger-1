@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace CoreBlogger.Core
@@ -21,13 +22,13 @@ namespace CoreBlogger.Core
             int dashWIndex = _args.FindIndex(fi => fi == "-w");
             _workingDirectoryPath = dashWIndex != -1 ? _args[++dashWIndex] : Environment.CurrentDirectory;
 
-            PostsPath = $"{_workingDirectoryPath}\\_posts";
-            PagesPath = $"{_workingDirectoryPath}\\_pages";
-            IncludesPath = $"{_workingDirectoryPath}\\_includes";
-            LayoutsPath = $"{_workingDirectoryPath}\\_layouts";
-            SitePath = $"{_workingDirectoryPath}\\_site";
+            PostsPath = Path.Combine(_workingDirectoryPath, "_posts");
+            PagesPath = Path.Combine(_workingDirectoryPath, "_pages");
+            IncludesPath = Path.Combine(_workingDirectoryPath, "_includes");
+            LayoutsPath = Path.Combine(_workingDirectoryPath, "_layouts");
+            SitePath = Path.Combine(_workingDirectoryPath, "_site");
 
-            PostOutputPath = $"{SitePath}\\post";
+            PostOutputPath = Path.Combine(SitePath, "post");
         }
 
         public bool NewBlogPost { get; }
