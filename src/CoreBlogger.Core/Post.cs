@@ -5,7 +5,7 @@ namespace CoreBlogger.Core
 {
     internal class Post
     {
-        public Post(FrontMatter frontMatter, string markdown, string originalFileName)
+        public Post(PostFrontMatter frontMatter, string markdown, string originalFileName, string postOutputPath)
         {
             FrontMatter = frontMatter;
             Markdown = markdown;
@@ -16,19 +16,22 @@ namespace CoreBlogger.Core
             Day = originalFileName[8..10];
 
             string fileName = originalFileName[11..^3];
-            
+            FullySpecifiedFolder = $"{postOutputPath}\\{Year}\\{Month}\\{Day}";
+            FullySpecifiedFolderAndFileName = $"{FullySpecifiedFolder}\\{fileName}.html";
         }
 
-        public FrontMatter FrontMatter { get; private set; }
+        public PostFrontMatter FrontMatter { get; private set; }
         public string Markdown { get; private set; }
         public string Html { get; set; }
         public string OriginalFileName { get; private set; }
         public string Year { get; internal set; }
         public string Month { get; internal set; }
         public string Day { get; internal set; }
+        public string FullySpecifiedFolder { get; internal set; }
+        public string FullySpecifiedFolderAndFileName { get; internal set; }
     }
 
-    public class FrontMatter
+    public class PostFrontMatter
     {
         public bool Search { get; set; }
         public string Title { get; set; }

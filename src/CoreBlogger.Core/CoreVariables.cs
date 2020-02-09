@@ -26,6 +26,8 @@ namespace CoreBlogger.Core
             IncludesPath = $"{_workingDirectoryPath}\\_includes";
             LayoutsPath = $"{_workingDirectoryPath}\\_layouts";
             SitePath = $"{_workingDirectoryPath}\\_site";
+
+            PostOutputPath = $"{SitePath}\\post";
         }
 
         public bool NewBlogPost { get; }
@@ -37,6 +39,6 @@ namespace CoreBlogger.Core
         public string IncludesPath { get; private set; }
         public string LayoutsPath { get; private set; }
         public string SitePath { get; private set; }
-
+        public string PostOutputPath { get; internal set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace CoreBlogger.Core
 {
@@ -15,6 +16,9 @@ namespace CoreBlogger.Core
             var coreVariables = new CoreVariables(args);
             var generator = new Generator(coreVariables);
 
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+
             if (coreVariables.CreateNewSite)
             {
                 generator.CreateNewSite(coreVariables);
@@ -27,6 +31,9 @@ namespace CoreBlogger.Core
             {
                 generator.GenerateSite(coreVariables);
             }
+
+            sw.Stop();
+            System.Console.WriteLine($"It took {sw.ElapsedMilliseconds}ms to generate the site.");
 
             Environment.Exit(1);
         }

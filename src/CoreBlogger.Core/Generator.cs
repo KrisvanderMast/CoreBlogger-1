@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Markdig;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
@@ -29,12 +30,42 @@ namespace CoreBlogger.Core
             ExtractLayoutsData(layouts);
 
             // Manipulate
-
-
+            TransformPostMarkdownToHtml(posts);
+            TransformPagesMarkdownToHtml(pages);
 
             // Write the site content
+            WritePostsToDisk(posts);
+            WritePagesToDisk(pages);
+        }
 
+        private void WritePostsToDisk(List<Post> posts)
+        {
+            foreach (Post post in posts)
+            {
+                IOHelper.MakeSureSubfoldersExist(post.FullySpecifiedFolder);
+                IOHelper.WriteFile(post.Html, post.FullySpecifiedFolderAndFileName);
+            }
+        }
 
+        private void WritePagesToDisk(List<Page> pages)
+        {
+            
+        }
+
+        private void TransformPagesMarkdownToHtml(List<Page> pages)
+        {
+        }
+
+        private void TransformPostMarkdownToHtml(List<Post> posts)
+        {
+            var pipeline = new MarkdownPipelineBuilder()
+                            .UseAdvancedExtensions()
+                            .Build();
+
+            foreach (var post in posts)
+            {
+                post.Html = Markdown.ToHtml(post.Markdown, pipeline);
+            }
         }
 
         private void ExtractPostsData(List<Post> posts)
@@ -55,35 +86,36 @@ namespace CoreBlogger.Core
             var originalContent = IOHelper.ReadContentAsString(fileInfo);
             string[] parts = originalContent.Split("---", 2, StringSplitOptions.RemoveEmptyEntries);
 
-            var frontMatter = deserializer.Deserialize<FrontMatter>(parts[0]);
+            var frontMatter = deserializer.Deserialize<PostFrontMatter>(parts[0]);
             var originalBody = parts[1];
 
-            posts.Add(new Post(frontMatter, originalBody, fileInfo.Name));
+            posts.Add(new Post(frontMatter, originalBody, fileInfo.Name, _cv.PostOutputPath));
         }
 
         private void ExtractPagesData(List<Page> pages)
         {
-            throw new NotImplementedException();
+
         }
 
         private void ExtractLayoutsData(Dictionary<string, string> layouts)
         {
-            throw new NotImplementedException();
+
         }
 
         private void AppendCoreVariablesWithConfigYaml(CoreVariables cv)
         {
             // read out the config.yml, transform it and append the new read in data to the CoreVariables properties
+
         }
 
         internal void CreateNewSite(CoreVariables coreVariables)
         {
-            throw new NotImplementedException();
+
         }
 
         internal void CreateNewBlogPost(CoreVariables coreVariables)
         {
-            throw new NotImplementedException();
+
         }
     }
 }

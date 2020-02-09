@@ -7,7 +7,7 @@ namespace CoreBlogger.Core
         internal static void MakeSureSubfoldersExist(string path)
         {
             DirectoryInfo di = new DirectoryInfo(path);
-            
+
             if (!di.Exists)
             {
                 di.Create();
@@ -22,6 +22,12 @@ namespace CoreBlogger.Core
                 s = sr.ReadToEnd();
                 return s;
             }
+        }
+
+        internal static void WriteFile(string html, string fullySpecifiedFolderAndFileName)
+        {
+            using StreamWriter sw = new StreamWriter(fullySpecifiedFolderAndFileName);
+            sw.Write(html);
         }
     }
 }
