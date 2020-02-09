@@ -1,12 +1,18 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.NamingConventions;
 
 namespace CoreBlogger.Core
 {
     internal class Generator
     {
-        public Generator()
+        private readonly CoreVariables _cv;
+
+        public Generator(CoreVariables cv)
         {
+            _cv = cv;
         }
 
         internal void GenerateSite(CoreVariables cv)
@@ -16,7 +22,7 @@ namespace CoreBlogger.Core
             var posts = new List<Post>();
             var pages = new List<Page>();
             var layouts = new Dictionary<string, string>();
-            
+
             // Prepare the data
             ExtractPostsData(posts);
             ExtractPagesData(pages);
@@ -27,11 +33,32 @@ namespace CoreBlogger.Core
 
 
             // Write the site content
+
+
         }
 
         private void ExtractPostsData(List<Post> posts)
         {
-            throw new NotImplementedException();
+            var deserializer = new DeserializerBuilder()
+                                        .WithNamingConvention(CamelCaseNamingConvention.Instance)
+                                        .WithNamingConvention(UnderscoredNamingConvention.Instance)
+                                        .Build();
+
+            foreach (FileInfo post in new DirectoryInfo(_cv.PostsPath).GetFiles())
+            {
+                ReadFileAndInitializeFrontMatter(posts, deserializer, post);
+            }
+        }
+
+        private void ReadFileAndInitializeFrontMatter(List<Post> posts, IDeserializer deserializer, FileInfo fileInfo)
+        {
+            var originalContent = IOHelper.ReadContentAsString(fileInfo);
+            string[] parts = originalContent.Split("---", 2, StringSplitOptions.RemoveEmptyEntries);
+
+            var frontMatter = deserializer.Deserialize<FrontMatter>(parts[0]);
+            var originalBody = parts[1];
+
+            posts.Add(new Post(frontMatter, originalBody, fileInfo.Name));
         }
 
         private void ExtractPagesData(List<Page> pages)

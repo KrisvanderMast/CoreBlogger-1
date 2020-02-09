@@ -13,18 +13,19 @@ namespace CoreBlogger.Core
             }
 
             var coreVariables = new CoreVariables(args);
+            var generator = new Generator(coreVariables);
 
             if (coreVariables.CreateNewSite)
             {
-                new Generator().CreateNewSite(coreVariables);
+                generator.CreateNewSite(coreVariables);
             }
             else if (coreVariables.NewBlogPost)
             {
-                new Generator().CreateNewBlogPost(coreVariables);
+                generator.CreateNewBlogPost(coreVariables);
             }
             else
             {
-                new Generator().GenerateSite(coreVariables);
+                generator.GenerateSite(coreVariables);
             }
 
             Environment.Exit(1);
