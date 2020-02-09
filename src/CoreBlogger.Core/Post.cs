@@ -10,6 +10,13 @@ namespace CoreBlogger.Core
             FrontMatter = frontMatter;
             Markdown = markdown;
             OriginalFileName = originalFileName;
+
+            Year = originalFileName[0..4];
+            Month = originalFileName[5..7];
+            Day = originalFileName[8..10];
+
+            string fileName = originalFileName[11..^3];
+            
         }
 
         public FrontMatter FrontMatter { get; private set; }
