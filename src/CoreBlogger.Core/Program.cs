@@ -12,7 +12,22 @@ namespace CoreBlogger.Core
                 Environment.Exit(0);
             }
 
-            var arguments = new CoreVariables(args);
+            var coreVariables = new CoreVariables(args);
+
+            if (coreVariables.CreateNewSite)
+            {
+                new Generator().CreateNewSite(coreVariables);
+            }
+            else if (coreVariables.NewBlogPost)
+            {
+                new Generator().CreateNewBlogPost(coreVariables);
+            }
+            else
+            {
+                new Generator().GenerateSite(coreVariables);
+            }
+
+            Environment.Exit(1);
         }
 
         private static void WriteHowToMakeUseOfTheToolMessage()
