@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Markdig;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
@@ -49,7 +50,7 @@ namespace CoreBlogger.Core
 
         private void WritePagesToDisk(List<Page> pages)
         {
-            
+
         }
 
         private void TransformPagesMarkdownToHtml(List<Page> pages)
@@ -99,7 +100,35 @@ namespace CoreBlogger.Core
 
         private void ExtractLayoutsData(Dictionary<string, string> layouts)
         {
+            var deserializer = new DeserializerBuilder()
+                                                    .WithNamingConvention(CamelCaseNamingConvention.Instance)
+                                                    .WithNamingConvention(UnderscoredNamingConvention.Instance)
+                                                    .Build();
 
+            var l = new List<(string name, string masterLayout)>();
+
+            foreach (FileInfo fileInfo in new DirectoryInfo(_cv.LayoutsPath).GetFiles())
+            {
+                var originalContent = IOHelper.ReadContentAsString(fileInfo);
+                string[] parts = originalContent.Split("---", 2, StringSplitOptions.RemoveEmptyEntries);
+
+                var d = deserializer.Deserialize<LayoutFrontMatter>(parts[0]);
+                string name = fileInfo.Name[0..^5];
+                l.Add((name, d?.Layout ?? string.Empty));
+
+                if (!layouts.Keys.Contains(name))
+                {
+                    layouts.Add(name, parts[1]);
+                }
+            }
+
+            foreach (var name in layouts.Keys)
+            {
+                foreach (var item in l.Where(w => w.masterLayout == name))
+                {
+                    string v = layouts[item.name];
+                }
+            }
         }
 
         private void AppendCoreVariablesWithConfigYaml(CoreVariables cv)
@@ -117,5 +146,10 @@ namespace CoreBlogger.Core
         {
 
         }
+    }
+
+    internal class LayoutFrontMatter
+    {
+        public string Layout { get; set; }
     }
 }
