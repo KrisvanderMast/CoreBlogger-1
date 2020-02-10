@@ -26,9 +26,9 @@ namespace CoreBlogger.Core
             var layouts = new Dictionary<string, string>();
 
             // Prepare the data
+            ExtractLayoutsData(layouts);
             ExtractPostsData(posts);
             ExtractPagesData(pages);
-            ExtractLayoutsData(layouts);
 
             // Manipulate
             TransformPostMarkdownToHtml(posts);
@@ -122,13 +122,7 @@ namespace CoreBlogger.Core
                 }
             }
 
-            foreach (var name in layouts.Keys)
-            {
-                foreach (var item in l.Where(w => w.masterLayout == name))
-                {
-                    string v = layouts[item.name];
-                }
-            }
+            layouts["single"] = layouts["default"].Replace("{{ content }}", layouts["single"]);
         }
 
         private void AppendCoreVariablesWithConfigYaml(CoreVariables cv)
