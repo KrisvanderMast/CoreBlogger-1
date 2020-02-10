@@ -33,10 +33,28 @@ namespace CoreBlogger.Core
             // Manipulate
             TransformPostMarkdownToHtml(posts);
             TransformPagesMarkdownToHtml(pages);
+            ParsePostsWithLayout(posts, layouts);
+            ParsePagesWithLayout(pages, layouts);
 
             // Write the site content
             WritePostsToDisk(posts);
             WritePagesToDisk(pages);
+        }
+
+        private void ParsePostsWithLayout(List<Post> posts, Dictionary<string, string> layouts)
+        {
+            // For the MVP (Minimal Viable Product) we're assuming that single will be the main layout for posts.
+            // This will become dynamic from _config.yml later on where defaults for posts will be added
+
+            foreach (Post post in posts)
+            {
+                post.Html = layouts["single"].Replace("{{ content }}", post.Html);
+            }
+        }
+
+        private void ParsePagesWithLayout(List<Page> pages, Dictionary<string, string> layouts)
+        {
+
         }
 
         private void WritePostsToDisk(List<Post> posts)
@@ -122,6 +140,8 @@ namespace CoreBlogger.Core
                 }
             }
 
+            // This is good enough for the MVP as there are only 2 pages at the moment in our testsite. 
+            // Later on this will become a more dynamic algorithnm to determine all layouts, likely via a recursive function where default page is the beginning
             layouts["single"] = layouts["default"].Replace("{{ content }}", layouts["single"]);
         }
 
