@@ -68,8 +68,12 @@ namespace CoreBlogger.Core
 
         private void CreateIndexPages(List<Post> posts)
         {
-            foreach (var post in posts.OrderByDescending(o => o.Year).ThenByDescending(t => t.Month).ThenByDescending(t => t.Day))
+            IOrderedEnumerable<Post> orderedEnumerable = posts.OrderByDescending(o => o.Year).ThenByDescending(t => t.Month).ThenByDescending(t => t.Day);
+            foreach (var post in orderedEnumerable)
             {
+                post.Previous = post.FullySpecifiedFolderAndFileName;
+                post.Next = post.FullySpecifiedFolderAndFileName;
+
                 
             }
         }

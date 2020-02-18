@@ -30,6 +30,8 @@ namespace CoreBlogger.Core
         public string Day { get; internal set; }
         public string FullySpecifiedFolder { get; internal set; }
         public string FullySpecifiedFolderAndFileName { get; internal set; }
+        public string Previous { get; set; }
+        public string Next { get; set; }
     }
 
     public class PostFrontMatter
