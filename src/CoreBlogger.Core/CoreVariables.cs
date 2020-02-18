@@ -27,8 +27,12 @@ namespace CoreBlogger.Core
             IncludesPath = Path.Combine(_workingDirectoryPath, "_includes");
             LayoutsPath = Path.Combine(_workingDirectoryPath, "_layouts");
             SitePath = Path.Combine(_workingDirectoryPath, "_site");
-
+            AssetsImagesPath = Path.Combine(SitePath, "assets", "images");
+            AssetsJsPath = Path.Combine(SitePath, "assets", "js");
+            AssetsCssPath = Path.Combine(SitePath, "assets", "css");
+            AssetsOriginalPath = Path.Combine(_workingDirectoryPath, "assets");
             PostOutputPath = Path.Combine(SitePath, "post");
+            AssetsOutputPath = Path.Combine(SitePath, "assets");
         }
 
         public bool NewBlogPost { get; }
@@ -40,6 +44,11 @@ namespace CoreBlogger.Core
         public string IncludesPath { get; private set; }
         public string LayoutsPath { get; private set; }
         public string SitePath { get; private set; }
+        public string AssetsImagesPath { get; private set; }
+        public string AssetsJsPath { get; }
+        public string AssetsCssPath { get; }
+        public string AssetsOriginalPath { get; }
         public string PostOutputPath { get; internal set; }
+        public string AssetsOutputPath { get; }
     }
 }

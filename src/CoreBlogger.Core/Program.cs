@@ -33,7 +33,7 @@ namespace CoreBlogger.Core
             }
 
             sw.Stop();
-            System.Console.WriteLine($"It took {sw.ElapsedMilliseconds}ms to generate the site.");
+            System.Console.WriteLine($"It took {sw.ElapsedMilliseconds}ms to generate the site as a whole process.");
 
             Environment.Exit(1);
         }

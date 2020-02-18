@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Markdig;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
@@ -25,20 +27,56 @@ namespace CoreBlogger.Core
             var pages = new List<Page>();
             var layouts = new Dictionary<string, string>();
 
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+
             // Prepare the data
-            ExtractLayoutsData(layouts);
-            ExtractPostsData(posts);
-            ExtractPagesData(pages);
+            Parallel.Invoke(
+                () => ExtractLayoutsData(layouts), //;
+                () => ExtractPostsData(posts), //;
+                () => ExtractPagesData(pages)//;
+            );
+
+            Console.WriteLine($"It took {sw.ElapsedMilliseconds}ms to extract the data");
+            sw.Restart();
 
             // Manipulate
-            TransformPostMarkdownToHtml(posts);
-            TransformPagesMarkdownToHtml(pages);
-            ParsePostsWithLayout(posts, layouts);
-            ParsePagesWithLayout(pages, layouts);
+            Parallel.Invoke(
+                () => TransformPostMarkdownToHtml(posts),
+                () => TransformPagesMarkdownToHtml(pages)
+            );
+            Parallel.Invoke(
+                () => ParsePostsWithLayout(posts, layouts),
+                () => ParsePagesWithLayout(pages, layouts)
+            );
+
+            Console.WriteLine($"It took {sw.ElapsedMilliseconds}ms to parse the data");
+            sw.Restart();
 
             // Write the site content
-            WritePostsToDisk(posts);
-            WritePagesToDisk(pages);
+            Parallel.Invoke(
+                () => WritePostsToDisk(posts),
+                () => WritePagesToDisk(pages),
+                () => CopyAssets()
+            );
+
+            CreateIndexPages(posts);
+
+            sw.Stop();
+            Console.WriteLine($"It took {sw.ElapsedMilliseconds}ms to physically create the site.");
+        }
+
+        private void CreateIndexPages(List<Post> posts)
+        {
+            foreach (var post in posts.OrderByDescending(o => o.Year).ThenByDescending(t => t.Month).ThenByDescending(t => t.Day))
+            {
+                
+            }
+        }
+
+        private void CopyAssets()
+        {
+            IOHelper.DirectoryCopy(_cv.AssetsOriginalPath, _cv.AssetsOutputPath, true);
         }
 
         private void ParsePostsWithLayout(List<Post> posts, Dictionary<string, string> layouts)
