@@ -11,7 +11,7 @@
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
             "program": "${workspaceFolder}/src/CoreBlogger.Core/bin/Debug/netcoreapp3.1/CoreBlogger.Core.dll",
-            "args": [],
+            "args": ["-w", "C:\\code\\CoreBlogger-1\\src\\testsite"],
             "cwd": "${workspaceFolder}/src/CoreBlogger.Core",
             // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
             "console": "internalConsole",

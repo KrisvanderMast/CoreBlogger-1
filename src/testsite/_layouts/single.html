@@ -3,4 +3,12 @@ layout: default
 ---
 <div style="background-color: red; width:80%;">
     {{ content }}
+    <div>
+        <div class="previousPost">
+            <a href="{{ post.Previous }}">Previous</a>
+        </div>
+        <div class="nextPost">
+            <a href="{{ post.Next }}">Next</a>
+        </div>
+    </div>
 </div>

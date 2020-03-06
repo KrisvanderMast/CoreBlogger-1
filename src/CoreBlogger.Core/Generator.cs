@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using Markdig;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
@@ -31,51 +30,61 @@ namespace CoreBlogger.Core
             sw.Start();
 
             // Prepare the data
-            Parallel.Invoke(
-                () => ExtractLayoutsData(layouts), //;
-                () => ExtractPostsData(posts), //;
-                () => ExtractPagesData(pages)//;
-            );
+            ExtractLayoutsData(layouts);
+            ExtractPostsData(posts);
+            ExtractPagesData(pages);
 
             Console.WriteLine($"It took {sw.ElapsedMilliseconds}ms to extract the data");
             sw.Restart();
 
             // Manipulate
-            Parallel.Invoke(
-                () => TransformPostMarkdownToHtml(posts),
-                () => TransformPagesMarkdownToHtml(pages)
-            );
-            Parallel.Invoke(
-                () => ParsePostsWithLayout(posts, layouts),
-                () => ParsePagesWithLayout(pages, layouts)
-            );
+            TransformPostMarkdownToHtml(posts);
+            TransformPagesMarkdownToHtml(pages);
+            ParsePostsWithLayout(posts, layouts);
+            ParsePagesWithLayout(pages, layouts);
 
             Console.WriteLine($"It took {sw.ElapsedMilliseconds}ms to parse the data");
             sw.Restart();
 
             // Write the site content
-            Parallel.Invoke(
-                () => WritePostsToDisk(posts),
-                () => WritePagesToDisk(pages),
-                () => CopyAssets()
-            );
+            WritePostsToDisk(posts);
+            WritePagesToDisk(pages);
+            CopyAssets();
 
             CreateIndexPages(posts);
+            CreateTagPages(posts);
+            CreateCategoriesPages(posts);
 
             sw.Stop();
             Console.WriteLine($"It took {sw.ElapsedMilliseconds}ms to physically create the site.");
         }
 
+        private IEnumerable<Post> OrderAndDetermineNextPreviousPost(List<Post> posts)
+        {
+            List<Post> orderedEnumerable = posts.OrderByDescending(o => o.Year).ThenByDescending(t => t.Month).ThenByDescending(t => t.Day).ToList();
+
+            for (int i = 0; i < orderedEnumerable.Count(); i++)
+            {
+                orderedEnumerable[i].Previous = i == 0 ? "" : orderedEnumerable[i - 1].FullySpecifiedFolderAndFileName;
+                orderedEnumerable[i].Next = i == orderedEnumerable.Count() -1 ? "" : orderedEnumerable[i + 1].FullySpecifiedFolderAndFileName;
+            }
+
+            return orderedEnumerable;
+        }
+
+        private void CreateCategoriesPages(List<Post> posts)
+        {
+
+        }
+
+        private void CreateTagPages(List<Post> posts)
+        {
+
+        }
+
         private void CreateIndexPages(List<Post> posts)
         {
-            IOrderedEnumerable<Post> orderedEnumerable = posts.OrderByDescending(o => o.Year).ThenByDescending(t => t.Month).ThenByDescending(t => t.Day);
-            foreach (var post in orderedEnumerable)
-            {
-                post.Previous = post.FullySpecifiedFolderAndFileName;
-                post.Next = post.FullySpecifiedFolderAndFileName;
-
-                
-            }
+            var p = OrderAndDetermineNextPreviousPost(posts);
         }
 
         private void CopyAssets()
@@ -88,9 +97,11 @@ namespace CoreBlogger.Core
             // For the MVP (Minimal Viable Product) we're assuming that single will be the main layout for posts.
             // This will become dynamic from _config.yml later on where defaults for posts will be added
 
-            foreach (Post post in posts)
+            foreach (Post post in OrderAndDetermineNextPreviousPost(posts))
             {
                 post.Html = layouts["single"].Replace("{{ content }}", post.Html);
+
+                post.Html = post.Html.Replace("{{ post.Previous }}", post.Previous).Replace("{{ post.Next }}", post.Next);
             }
         }
 
