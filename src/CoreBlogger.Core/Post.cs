@@ -6,12 +6,11 @@ namespace CoreBlogger.Core
 {
     internal class Post
     {
-        public Post(PostFrontMatter frontMatter, string markdown, string originalFileName, string postOutputPath)
+        public Post(PostFrontMatter frontMatter, string markdown, string originalFileName, string postOutputPath, string baseUrl)
         {
             FrontMatter = frontMatter;
             Markdown = markdown;
             OriginalFileName = originalFileName;
-
             Year = originalFileName[0..4];
             Month = originalFileName[5..7];
             Day = originalFileName[8..10];
@@ -19,6 +18,7 @@ namespace CoreBlogger.Core
             string fileName = $"{originalFileName[11..^3]}.html";
             FullySpecifiedFolder = Path.Combine(postOutputPath, Year, Month, Day);
             FullySpecifiedFolderAndFileName = Path.Combine(FullySpecifiedFolder, fileName);
+            Url = $"{baseUrl}post/{Year}/{Month}/{Day}/{fileName}";
         }
 
         public PostFrontMatter FrontMatter { get; private set; }
@@ -30,6 +30,9 @@ namespace CoreBlogger.Core
         public string Day { get; internal set; }
         public string FullySpecifiedFolder { get; internal set; }
         public string FullySpecifiedFolderAndFileName { get; internal set; }
+
+        // Navigation
+        public string Url { get; set; }
         public string Previous { get; set; }
         public string Next { get; set; }
     }

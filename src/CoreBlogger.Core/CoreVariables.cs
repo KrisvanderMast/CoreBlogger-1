@@ -33,6 +33,10 @@ namespace CoreBlogger.Core
             AssetsOriginalPath = Path.Combine(_workingDirectoryPath, "assets");
             PostOutputPath = Path.Combine(SitePath, "post");
             AssetsOutputPath = Path.Combine(SitePath, "assets");
+
+            // todo: will come from _config.yml later on
+            PostsPerIndexPage = 10;
+            BaseUrl = "http://www.krisvandermast.com/";
         }
 
         public bool NewBlogPost { get; }
@@ -50,5 +54,7 @@ namespace CoreBlogger.Core
         public string AssetsOriginalPath { get; }
         public string PostOutputPath { get; internal set; }
         public string AssetsOutputPath { get; }
+        public int PostsPerIndexPage { get; internal set; }
+        public string BaseUrl { get; set; }
     }
 }
