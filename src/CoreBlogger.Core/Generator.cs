@@ -53,8 +53,8 @@ namespace CoreBlogger.Core
             CopyAssets();
 
             CreateIndexPages(posts, layouts["index"]);
-            CreateTagPages(posts);
-            CreateCategoriesPages(posts);
+            CreateTagPages(posts, layouts["tags"]);
+            CreateCategoriesPages(posts, layouts["categories"]);
 
             sw.Stop();
             Console.WriteLine($"It took {sw.ElapsedMilliseconds}ms to physically create the site.");
@@ -80,8 +80,8 @@ namespace CoreBlogger.Core
                 for (int j = 0; j < totalAmountOfIndexPages; j++)
                 {
                     string cssClass = j < i ? "previousIndexPage" : j == i ? "currentIndexPage" : "nextIndexPage";
-                    string pageNumber = j == 0 ? string.Empty : $"page{j+1}/";
-                    sb.Append($"<span class'{cssClass}'><a href='{_cv.BaseUrl}{pageNumber}index.html'>{j+1}</a></span>");
+                    string pageNumber = j == 0 ? string.Empty : $"page{j + 1}/";
+                    sb.Append($"<span class'{cssClass}'><a href='{_cv.BaseUrl}{pageNumber}index.html'>{j + 1}</a></span>");
                 }
 
                 string prevNext = sb.ToString();
@@ -100,14 +100,64 @@ namespace CoreBlogger.Core
             }
         }
 
-        private void CreateTagPages(List<Post> posts)
+        private void CreateTagPages(List<Post> posts, string tagLayout)
         {
+            // Get all tags
+            var tags = posts
+                        .Where(w => w.FrontMatter.Tags != null)
+                        .SelectMany(sm => sm.FrontMatter.Tags)
+                        .Distinct()
+                        .OrderBy(o => o);
 
+            var sbTags = new StringBuilder();
+            var sbLinks = new StringBuilder();
+
+            foreach (var tag in tags)
+            {
+                sbTags.Append($"<span><a href='#{tag}'>{tag}</a></span>");
+                sbLinks.Append($"<div id='{tag}'>");
+                sbLinks.Append($"<h3>{tag}</h3>");
+                foreach (var post in posts.Where(w => w.FrontMatter.Tags != null && w.FrontMatter.Tags.Contains(tag)))
+                {
+                    sbLinks.Append($"<span><a href='{post.Url}'>{post.FrontMatter.Title}</a></span>");
+                }
+                sbLinks.Append("</div>");
+            }
+
+            string html = tagLayout.Replace("{{ content }}", sbLinks.ToString()).Replace("{{ page.tags }}", sbTags.ToString());
+
+            IOHelper.MakeSureSubfoldersExist(_cv.TagsOutputPath);
+            IOHelper.WriteFile(html, Path.Combine(_cv.TagsOutputPath, "index.html"));
         }
 
-        private void CreateCategoriesPages(List<Post> posts)
+        private void CreateCategoriesPages(List<Post> posts, string categoryLayout)
         {
+            var categories = posts
+                .Where(w => w.FrontMatter.Categories != null)
+                .SelectMany(sm => sm.FrontMatter.Categories)
+                .Distinct()
+                .OrderBy(o => o);
 
+            var sbCategories = new StringBuilder();
+            var sbLinks = new StringBuilder();
+
+            foreach (var category in categories)
+            {
+                sbCategories.Append($"<span><a href='#tag'>{category}</a></span>");
+                sbLinks.Append($"<div id='{category}'>");
+                sbLinks.Append($"<h3>{category}</h3>");
+
+                foreach (var post in posts.Where(w => w.FrontMatter.Categories != null && w.FrontMatter.Categories.Contains(category)))
+                {
+                    sbLinks.Append($"<span><a href='{post.Url}'>{post.FrontMatter.Title}</a></span>");
+                }
+                sbLinks.Append("</div>");
+            }
+
+            string html = categoryLayout.Replace("{{ content }}", sbLinks.ToString()).Replace("{{ page.categories }}", sbCategories.ToString());
+
+            IOHelper.MakeSureSubfoldersExist(_cv.CategoriesOutputPath);
+            IOHelper.WriteFile(html, Path.Combine(_cv.CategoriesOutputPath, "index.html"));
         }
 
         private void CopyAssets()
