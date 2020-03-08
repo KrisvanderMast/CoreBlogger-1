@@ -19,9 +19,9 @@ namespace CoreBlogger.Core
             _cv = cv;
         }
 
-        internal void GenerateSite(CoreVariables cv)
+        internal void GenerateSite()
         {
-            AppendCoreVariablesWithConfigYaml(cv);
+            AppendCoreVariablesWithConfigYaml(_cv);
 
             var posts = new List<Post>();
             var pages = new List<Page>();
@@ -271,7 +271,7 @@ namespace CoreBlogger.Core
                 }
             }
 
-            // This is good enough for the MVP as there are only 2 pages at the moment in our testsite. 
+            // This is good enough for the MVP as there are only a couple of pages at the moment in our testsite. 
             // Later on this will become a more dynamic algorithnm to determine all layouts, 
             // likely via a recursive function where default page is the beginning
             layouts["single"] = layouts["default"].Replace("{{ content }}", layouts["single"]);
@@ -286,14 +286,45 @@ namespace CoreBlogger.Core
 
         }
 
-        internal void CreateNewSite(CoreVariables coreVariables)
+        internal void CreateNewSite()
         {
 
         }
 
-        internal void CreateNewBlogPost(CoreVariables coreVariables)
+        internal void CreateNewBlogPost()
         {
+            System.Console.WriteLine("Title:");
+            string title = Console.ReadLine();
+            System.Console.WriteLine("Tags, comma separated");
+            string[] tags = Console.ReadLine().Split(",");
+            System.Console.WriteLine("Categories, comma separated");
+            string[] categories = Console.ReadLine().Split(",");
+            DateTime now = DateTime.Now;
+            string fileName = $"{now.Year.ToString("D4")}-{now.Month.ToString("D2")}-{now.Day.ToString("D2")}-{title.Replace(" ", "-")}.md";
 
+            var sb = new StringBuilder();
+            sb.AppendLine("---");
+            sb.AppendLine($"title: \"{title.Trim()}\"");
+            if (categories.Any() && !string.IsNullOrEmpty(categories.First()))
+            {
+                sb.AppendLine("categories:");
+                foreach (string category in categories)
+                {
+                    sb.AppendLine($"  - {category.Trim()}");
+                }
+            }
+            if (tags.Any() && !string.IsNullOrEmpty(tags.First()))
+            {
+                sb.AppendLine("tags:");
+                foreach (string tag in tags)
+                {
+                    sb.AppendLine($"  - {tag.Trim()}");
+                }
+            }
+            sb.AppendLine("---");
+
+            IOHelper.MakeSureSubfoldersExist(_cv.PostsPath);
+            IOHelper.WriteFile(sb.ToString(), Path.Combine(_cv.PostsPath, fileName));
         }
 
         private IEnumerable<Post> OrderAndDetermineNextPreviousPost(List<Post> posts)
@@ -303,8 +334,8 @@ namespace CoreBlogger.Core
             int postsCount = orderedEnumerable.Count();
             for (int i = 0; i < postsCount; i++)
             {
-                orderedEnumerable[i].Previous = i == 0 ? "" : orderedEnumerable[i - 1].Url;
-                orderedEnumerable[i].Next = i == postsCount - 1 ? "" : orderedEnumerable[i + 1].Url;
+                orderedEnumerable[i].Previous = i == 0 ? null : orderedEnumerable[i - 1].Url;
+                orderedEnumerable[i].Next = i == postsCount - 1 ? null : orderedEnumerable[i + 1].Url;
             }
 
             return orderedEnumerable;

@@ -21,15 +21,15 @@ namespace CoreBlogger.Core
 
             if (coreVariables.CreateNewSite)
             {
-                generator.CreateNewSite(coreVariables);
+                generator.CreateNewSite();
             }
             else if (coreVariables.NewBlogPost)
             {
-                generator.CreateNewBlogPost(coreVariables);
+                generator.CreateNewBlogPost();
             }
             else
             {
-                generator.GenerateSite(coreVariables);
+                generator.GenerateSite();
             }
 
             sw.Stop();
