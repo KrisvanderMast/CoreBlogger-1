@@ -222,9 +222,12 @@ namespace CoreBlogger.Core
             }
 
             // This is good enough for the MVP as there are only 2 pages at the moment in our testsite. 
-            // Later on this will become a more dynamic algorithnm to determine all layouts, likely via a recursive function where default page is the beginning
+            // Later on this will become a more dynamic algorithnm to determine all layouts, 
+            // likely via a recursive function where default page is the beginning
             layouts["single"] = layouts["default"].Replace("{{ content }}", layouts["single"]);
             layouts["index"] = layouts["default"].Replace("{{ content }}", layouts["index"]);
+            layouts["tags"] = layouts["default"].Replace("{{ content }}", layouts["tags"]);
+            layouts["categories"] = layouts["default"].Replace("{{ conent }}", layouts["categories"]);
         }
 
         private void AppendCoreVariablesWithConfigYaml(CoreVariables cv)
