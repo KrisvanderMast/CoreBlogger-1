@@ -89,7 +89,7 @@ namespace CoreBlogger.Core
 
                 for (int j = 0; j < indexPages[i].Count(); j++)
                 {
-                    sb.Append($"<a href='{indexPages[i][j].Url}'>{indexPages[i][j].FrontMatter.Title}</a><br/>");
+                    sb.Append($"<a href='{indexPages[i][j].Url}'>{indexPages[i][j].Title}</a><br/>");
                 }
 
                 string html = indexLayout.Replace("{{ content }}", sb.ToString()).Replace("{{ page.PreviousNext }}", prevNext);
@@ -116,10 +116,10 @@ namespace CoreBlogger.Core
             {
                 sbTags.Append($"<span><a href='#{tag}'>{tag}</a></span>");
                 sbLinks.Append($"<div id='{tag}'>");
-                sbLinks.Append($"<h3>{tag}</h3>");
+                sbLinks.Append($"<a href='#shortlist'><h3>{tag}</h3></a>");
                 foreach (var post in posts.Where(w => w.FrontMatter.Tags != null && w.FrontMatter.Tags.Contains(tag)))
                 {
-                    sbLinks.Append($"<span><a href='{post.Url}'>{post.FrontMatter.Title}</a></span>");
+                    sbLinks.Append($"<span><a href='{post.Url}'>{post.Title}</a></span>");
                 }
                 sbLinks.Append("</div>");
             }
@@ -145,11 +145,11 @@ namespace CoreBlogger.Core
             {
                 sbCategories.Append($"<span><a href='#tag'>{category}</a></span>");
                 sbLinks.Append($"<div id='{category}'>");
-                sbLinks.Append($"<h3>{category}</h3>");
+                sbLinks.Append($"<a href='#shortlist'><h3>{category}</h3></a>");
 
                 foreach (var post in posts.Where(w => w.FrontMatter.Categories != null && w.FrontMatter.Categories.Contains(category)))
                 {
-                    sbLinks.Append($"<span><a href='{post.Url}'>{post.FrontMatter.Title}</a></span>");
+                    sbLinks.Append($"<span><a href='{post.Url}'>{post.Title}</a></span>");
                 }
                 sbLinks.Append("</div>");
             }

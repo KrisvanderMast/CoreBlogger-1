@@ -22,6 +22,7 @@ namespace CoreBlogger.Core
         }
 
         public PostFrontMatter FrontMatter { get; private set; }
+        public string Title => FrontMatter.Title;
         public string Markdown { get; private set; }
         public string Html { get; set; }
         public string OriginalFileName { get; private set; }
