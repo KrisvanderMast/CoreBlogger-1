@@ -287,7 +287,7 @@ namespace CoreBlogger.Core
         internal void CreateNewBlogPost()
         {
             System.Console.WriteLine("Title:");
-            string title = Console.ReadLine();
+            string title = Console.ReadLine().Trim();
             System.Console.WriteLine("Tags, comma separated");
             string[] tags = Console.ReadLine().Split(",");
             System.Console.WriteLine("Categories, comma separated");
@@ -297,7 +297,7 @@ namespace CoreBlogger.Core
 
             var sb = new StringBuilder();
             sb.AppendLine("---");
-            sb.AppendLine($"title: \"{title.Trim()}\"");
+            sb.AppendLine($"title: \"{title}\"");
             if (categories.Any() && !string.IsNullOrEmpty(categories.First()))
             {
                 sb.AppendLine("categories:");
