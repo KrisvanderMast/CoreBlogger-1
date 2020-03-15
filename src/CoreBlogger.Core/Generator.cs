@@ -44,7 +44,7 @@ namespace CoreBlogger.Core
             ParsePostsWithLayoutAndWriteToDisk(posts, layouts);
             ParsePagesWithLayout(pages, layouts);
 
-            Console.WriteLine($"It took {sw.ElapsedMilliseconds}ms to parse the data");
+            Console.WriteLine($"It took {sw.ElapsedMilliseconds}ms to parse and write posts to disk.");
             sw.Restart();
 
             // Write the site content
@@ -117,10 +117,12 @@ namespace CoreBlogger.Core
                 sbTags.Append($"<span><a href='#{tag}'>{tag}</a></span>");
                 sbLinks.Append($"<div id='{tag}'>");
                 sbLinks.Append($"<a href='#shortlist'><h3>{tag}</h3></a>");
+
                 foreach (var post in posts.Where(w => w.FrontMatter.Tags != null && w.FrontMatter.Tags.Contains(tag)))
                 {
                     sbLinks.Append($"<span><a href='{post.Url}'>{post.Title}</a></span>");
                 }
+                
                 sbLinks.Append("</div>");
             }
 
@@ -186,15 +188,6 @@ namespace CoreBlogger.Core
         {
 
         }
-
-        // private void WritePostsToDisk(List<Post> posts)
-        // {
-        //     foreach (Post post in posts)
-        //     {
-        //         IOHelper.MakeSureSubfoldersExist(post.FullySpecifiedFolder);
-        //         IOHelper.WriteFile(post.Html, post.FullySpecifiedFolderAndFileName);
-        //     }
-        // }
 
         private void WritePagesToDisk(List<Page> pages)
         {
